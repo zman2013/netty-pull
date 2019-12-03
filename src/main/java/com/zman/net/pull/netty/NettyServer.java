@@ -1,6 +1,7 @@
 package com.zman.net.pull.netty;
 
 import com.zman.net.pull.AbstractServer;
+import com.zman.pull.stream.IDuplex;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -50,8 +51,8 @@ public class NettyServer extends AbstractServer {
 
         public void channelInactive(ChannelHandlerContext ctx) {
             Channel channel = ctx.channel();
-            duplexMap.remove(channel.id());
-            onDisconnectedCallback.accept(channel.id().asShortText());
+            IDuplex duplex = duplexMap.remove(channel.id());
+            onDisconnectedCallback.accept(channel.id().asShortText(), duplex);
         }
 
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
