@@ -8,7 +8,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -98,8 +97,7 @@ public class NettyServerTest {
 
     }
 
-    @Test
-    public void startServer() throws IOException {
+    public static void main(String[] args) throws IOException {
         System.in.read();
     }
 

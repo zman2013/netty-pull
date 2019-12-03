@@ -14,16 +14,14 @@ import static com.zman.pull.stream.util.Pull.pull;
 
 public class Example1 {
 
-    @Test
     public void server() throws IOException {
         new NettyServer()
-                .onAccept(duplex -> pull(duplex, duplex))
+                .onAccept((connectId,duplex ) -> pull(duplex, duplex))
                 .listen(8081);
 
         System.in.read();
     }
 
-    @Test
     public void consoleClient() {
         DefaultSink<ByteBuf> sink = new DefaultSink<>(System.out::println);
 
@@ -32,12 +30,11 @@ public class Example1 {
                 .connect("localhost", 8081);
     }
 
-
     @Test
     public void clientAndServer() throws InterruptedException, IOException {
         int port = 8081;
         new NettyServer()
-                .onAccept(duplex -> pull(duplex, duplex))
+                .onAccept((connectionId,duplex )-> pull(duplex, duplex))
                 .listen(port);
 
         DefaultSource<ByteBuf> source = new DefaultSource<>();

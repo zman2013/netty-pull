@@ -6,7 +6,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Date;
@@ -18,7 +17,7 @@ import static io.netty.channel.ChannelOption.AUTO_READ;
 
 public class NettyClientTest {
 
-    final ChannelInboundHandlerAdapter handler = new ChannelInboundHandlerAdapter(){
+    final static ChannelInboundHandlerAdapter handler = new ChannelInboundHandlerAdapter(){
         private Channel channel;
         private boolean schedulerStart;
 
@@ -56,7 +55,7 @@ public class NettyClientTest {
         }
     };
 
-    public NettyClientTest() throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         new Thread(()-> {
@@ -84,10 +83,5 @@ public class NettyClientTest {
                 }
             }
         }).start();
-    }
-
-    @Test
-    public void testClient() throws InterruptedException, IOException {
-        System.in.read();
     }
 }

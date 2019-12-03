@@ -50,7 +50,6 @@ public class NettyDuplex implements IDuplex {
                 ByteBuf tmp = result.data.copy();
                 byte[] bytes = new byte[result.data.readableBytes()];
                 result.data.readBytes(bytes);
-                System.out.println(new String(bytes, StandardCharsets.UTF_8));
                 channel.writeAndFlush(tmp);
             }
         }while(result.status.equals(ReadResultEnum.Available));

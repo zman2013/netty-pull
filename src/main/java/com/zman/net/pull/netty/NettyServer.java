@@ -17,7 +17,6 @@ public class NettyServer extends AbstractServer {
 
     private ServerHandler serverHandler = new ServerHandler();
 
-
     /**
      * 启动服务器，监听端口
      *
@@ -46,12 +45,13 @@ public class NettyServer extends AbstractServer {
             Channel channel = ctx.channel();
             NettyDuplex duplex = new NettyDuplex(channel);
             duplexMap.put(channel.id(), duplex);
-            onAcceptCallback.accept(duplex);
+            onAcceptCallback.accept(channel.id().asShortText(), duplex);
         }
 
         public void channelInactive(ChannelHandlerContext ctx) {
             Channel channel = ctx.channel();
             duplexMap.remove(channel.id());
+            onDisconnectedCallback.accept(channel.id().asShortText());
         }
 
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
