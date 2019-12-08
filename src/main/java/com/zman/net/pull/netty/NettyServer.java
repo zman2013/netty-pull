@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NettyServer extends AbstractServer<IDuplex<ByteBuf>> {
+public class NettyServer extends AbstractServer {
 
 
     private ServerHandler serverHandler = new ServerHandler();
