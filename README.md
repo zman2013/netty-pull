@@ -10,7 +10,7 @@ a net-pull implementation based on netty.
 <dependency>
     <groupId>com.zmannotes</groupId>
     <artifactId>netty-pull</artifactId>
-    <version>2.1.2</version>
+    <version>2.1.3</version>
 </dependency>
 ```
 
