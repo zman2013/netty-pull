@@ -10,7 +10,7 @@ a net-pull implementation based on netty.
 <dependency>
     <groupId>com.zmannotes</groupId>
     <artifactId>netty-pull</artifactId>
-    <version>0.0.2</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -18,7 +18,7 @@ a net-pull implementation based on netty.
 ### Server
 ```java
 new NettyServer()
-        .onAccept(duplex -> pull(duplex, duplex))
+        .onAccept((channelId,duplex) -> pull(duplex, duplex))
         .listen(8081);
 ```
 ### Client
@@ -26,6 +26,6 @@ new NettyServer()
 DefaultSink<ByteBuf> sink = new DefaultSink<>(System.out::println);
 
 new NettyClient()
-        .onConnected(duplex -> pull( duplex, sink))
+        .onConnected((channelId,duplex) -> pull( duplex, sink))
         .connect("localhost", 8081);
 ```
