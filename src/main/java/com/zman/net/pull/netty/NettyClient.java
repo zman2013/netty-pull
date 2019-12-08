@@ -1,7 +1,9 @@
 package com.zman.net.pull.netty;
 
 import com.zman.net.pull.AbstractClient;
+import com.zman.pull.stream.IDuplex;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -11,7 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 import static io.netty.channel.ChannelOption.AUTO_READ;
 
-public class NettyClient extends AbstractClient {
+public class NettyClient extends AbstractClient<IDuplex<ByteBuf>> {
 
     @Override
     public void connect(String ip, int port) {
@@ -35,7 +37,7 @@ public class NettyClient extends AbstractClient {
             onConnectedCallback.accept(duplex);
         }
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            duplex.push(msg);
+            duplex.source().push((ByteBuf) msg);
         }
     };
 

@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit;
 public class NettyServerTest {
 
     @Sharable
-    class ServerHandler extends ChannelInboundHandlerAdapter{
+    static
+    class ServerHandler extends ChannelInboundHandlerAdapter {
 
         private boolean schedulerIsStarted = false;
 
@@ -35,18 +36,18 @@ public class NettyServerTest {
             System.out.println("accept client");
 
             channel = ctx.channel();
-            if(!schedulerIsStarted) {
+            if (!schedulerIsStarted) {
                 schedulerIsStarted = true;
                 Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(
-                        ()->{
-                            if( channel != null ){
+                        () -> {
+                            if (channel != null) {
                                 ByteBuf buf = Unpooled.buffer(4);
                                 buf.writeInt(signal);
                                 channel.writeAndFlush(buf).addListener((ChannelFutureListener) future -> {
-                                    if(future.isSuccess()){
-                                        System.out.println("write to socket successfully " + signal++ );
-                                    }else{
-                                        System.out.println(new Date()+" write to socket failed " + signal);
+                                    if (future.isSuccess()) {
+                                        System.out.println("write to socket successfully " + signal++);
+                                    } else {
+                                        System.out.println(new Date() + " write to socket failed " + signal);
                                     }
                                 });
                                 System.out.println(new Date() + " write to socket: " + signal + " channel : " + channel);
@@ -63,41 +64,36 @@ public class NettyServerTest {
         }
     }
 
-    private ChannelInboundHandlerAdapter serverHandler = new ServerHandler();
-
-    public NettyServerTest() {
-        new Thread(() -> {
-            EventLoopGroup group = new NioEventLoopGroup();
-
-            try{
-                ServerBootstrap b = new ServerBootstrap();
-                b.group(group)
-                        .channel(NioServerSocketChannel.class)
-                        .localAddress(new InetSocketAddress(8081))
-                        .childHandler(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            protected void initChannel(SocketChannel socketChannel) {
-                                socketChannel.pipeline().addLast(serverHandler);
-                            }
-                        });
-
-                ChannelFuture f = b.bind().sync();
-                f.channel().closeFuture().sync();
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    group.shutdownGracefully().sync();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }){}.start();
-
-    }
+    private static ChannelInboundHandlerAdapter serverHandler = new ServerHandler();
 
     public static void main(String[] args) throws IOException {
+        EventLoopGroup group = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(group)
+                    .channel(NioServerSocketChannel.class)
+                    .localAddress(new InetSocketAddress(8081))
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) {
+                            socketChannel.pipeline().addLast(serverHandler);
+                        }
+                    });
+
+            ChannelFuture f = b.bind().sync();
+            f.channel().closeFuture().sync();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                group.shutdownGracefully().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         System.in.read();
     }
 

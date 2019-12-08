@@ -16,17 +16,17 @@ public class Example1 {
 
     public void server() throws IOException {
         new NettyServer()
-                .onAccept((connectId,duplex ) -> pull(duplex, duplex))
+                .onAccept((connectId,duplex ) -> pull(duplex.source(), duplex.sink()))
                 .listen(8081);
 
         System.in.read();
     }
 
     public void consoleClient() {
-        DefaultSink<ByteBuf> sink = new DefaultSink<>(System.out::println);
+        DefaultSink<ByteBuf> sink = new DefaultSink<>(System.out::println, Throwable::printStackTrace);
 
         new NettyClient()
-                .onConnected(duplex -> pull( duplex, sink))
+                .onConnected(duplex -> pull( duplex.source(), sink))
                 .connect("localhost", 8081);
     }
 
@@ -41,7 +41,7 @@ public class Example1 {
         DefaultSink<ByteBuf> sink = new DefaultSink<>(buf -> {
             int i = buf.readInt();
             System.out.println(i);
-        });
+        }, Throwable::printStackTrace);
 
         new NettyClient()
                 .onConnected(duplex -> pull(source, duplex, sink))
