@@ -4,14 +4,24 @@ import com.zman.pull.stream.impl.DefaultDuplex;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
+import java.util.concurrent.ExecutionException;
+
 public class NettyDuplex extends DefaultDuplex<ByteBuf> {
 
 
     public NettyDuplex(Channel channel) {
 
         sink().onNext(byteBuf -> {
-            channel.writeAndFlush(byteBuf); // todo this function is async, so there exists buffer exceeding case.
-            return false;
+            try {
+                channel.writeAndFlush(byteBuf).get();
+            } catch (InterruptedException | ExecutionException e) {
+                channel.close();
+                sink().close(e);
+                source().close(e);
+                return true;        // stop
+            }
+
+            return false;   // go on
         }).onClosed(throwable -> {
             channel.close();
             sink().close(throwable);
